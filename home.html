@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Orphan Management System</title>
+    <style>
+    body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-image: url('logo.avif');
+    background-size: contain; /* Scale the image to fit within the viewport */
+    background-position: center; /* Center the image */
+    background-repeat: no-repeat; /* Prevent the image from repeating */
+    background-attachment: fixed; /* Optional: Fix the background image in place */
+    height: 100vh; /* Ensure the body takes the full height of the viewport */
+    overflow: hidden; /* Hide any overflow to ensure the image doesn’t cause scrolling */
+}
+
+        .sidebar {
+            width: 250px;
+            background-color: rgba(44, 62, 80, 0.9);
+            color: white;
+            padding: 20px;
+            height: 100vh;
+            position: fixed;
+        }
+        .sidebar h2 {
+            text-align: center;
+        }
+        .sidebar a {
+            display: block;
+            color: white;
+            text-decoration: none;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        .sidebar a:hover {
+            background-color: #34495e;
+        }
+        .content {
+            margin-left: 250px;
+            padding: 20px;
+            flex: 1;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 8px; 
+        }
+        .content h1 {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h2>Orphan Care Network</h2>
+        <a href="#home">Home</a>
+	<a href="#login">Login</a>
+        <a href="#donated_items">Donated Items</a>
+        <a href="#mission">Our Mission</a>
+	
+    </div>
+    <div class="content">
+        <h1>Welcome to Orphan Care Network</h1>
+        <p></p>
+    </div>
+</body>
+</html>
