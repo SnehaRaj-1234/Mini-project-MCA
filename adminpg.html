@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-image: url("{% static 'images/h3.jpg' %}");
+        background-size:cover ;
+        background-position: center center; 
+        background-repeat: no-repeat; 
+        background-attachment: fixed;
+        height: 100vh; 
+        overflow: hidden; 
+    }
+
+    .sidebar {
+        width: 250px;
+        background-color: rgba(44, 62, 80, 0.9);
+        color: white;
+        padding: 20px;
+        height: 100vh;
+        position: fixed;
+        z-index: 1; 
+    }
+    .sidebar h2 {
+        text-align: center;
+    }
+    .sidebar a {
+        display: block;
+        color: white;
+        text-decoration: none;
+        padding: 10px;
+        margin: 10px 0;
+        border-radius: 5px;
+        transition: background-color 0.3s;
+    }
+    .sidebar a:hover {
+        background-color: #34495e;
+    }
+    .content {
+        margin-left: 250px;
+        padding: 20px;
+        flex: 1;
+        background-color: rgba(255, 255, 255, 0.8);
+        border-radius: 8px;
+    }
+    .content h1 {
+        text-align: center;
+    }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h2>Orphan Care Network</h2>
+        <a href="#home">Home</a>
+        <a href="#view">View</a>
+        <a href="#update">Update</a>
+        <a href="feedback_form">Feedback Form</a>
+        <a href="#check_status">Check Status</a>
+        <a href="#future_support">Future Support</a>
+        <a href="#logout">Logout</a>
+    </div>
+    <div class="content">
+        <h1>Welcome to Orphan Care Network</h1>
+    </div>
+</body>
+</html>
