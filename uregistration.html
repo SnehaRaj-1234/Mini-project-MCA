@@ -30,7 +30,7 @@
 
         /* Container for form styling */
         .container {
-            background-color: #9b9494;
+            background-color:none;
             padding: 2rem;
             border-radius: 5px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -111,18 +111,20 @@
 </head>
 <body>
     <div class="container">
-        <h2>Registration</h2>
-        <form action="/register" method="POST">
+        <h2 style="color: #fff;">Registration</h2>
+        <form action="{% url 'register' %}" method="POST">
+            {% csrf_token %}
             <div class="form-group">
                 <label for="email"></label>
-                <input type="email" id="email" name="email" placeholder="Email" required>
+             
+                <input type="email" name="email" id="email"placeholder="Email"  required />
             </div>
             <div class="form-group">
                 <label for="password"></label>
                 <input type="password" id="password" name="password" placeholder="Password" required>
             </div>
             <button type="submit">Register</button>
-            <a href="/login" class="back-button">Back to Login</a>
+            <a href="{% url 'login' %}" class="back-button">Back to Login</a>
         </form>
     </div>
 </body>
