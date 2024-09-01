@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+        th {
+            background-color: #757373;
+            color: #fff;
+        }
+        td {
+            background-color: #fcf8f8;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        /* Set equal width for columns */
+        th, td {
+            width: 50%; /* Each column takes up half the width of the table */
+        }
+    </style>
+</head>
+<body>
+    <h1>Donation Details</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Item</th>
+                <th>Value</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Example static data, replace with dynamic content -->
+            <tr>
+                <td>Books</td>
+                <td>{{ books }}</td>
+            </tr>
+            <tr>
+                <td>Stationery Items</td>
+                <td>{{ stationery_items }}</td>
+            </tr>
+            <tr>
+                <td>Clothes</td>
+                <td>{{ clothes }}</td>
+            </tr>
+            <tr>
+                <td>Others</td>
+                <td>{{ others }}</td>
+            </tr>
+            <tr>
+                <td>Address</td>
+                <td>{{ address }}</td>
+            </tr>
+            <tr>
+                <td>Date</td>
+                <td>{{ date }}</td>
+            </tr>
+            <tr>
+                <td>Time</td>
+                <td>{{ time }}</td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>
