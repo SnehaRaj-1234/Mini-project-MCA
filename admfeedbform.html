@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-image: url("{% static 'images/fbackadmin.jpg' %}");
+            background-size: 1600px 750px;
+            background-repeat: no-repeat; 
+            background-position: center; 
+            color: #333;
+            padding: 20px;
+            margin: 0; 
+            height: 100vh; 
+            overflow: hidden; 
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #a2a73b;
+            color: #fff;
+        }
+
+        td {
+            background-color: #fff; 
+        }
+
+        tr:nth-child(even) td {
+            background-color: #f9f9f9; 
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <h1>Feedback Information</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Rating</th>
+                <th>Experience</th>
+                <th>Suggestions</th>
+                <th>Positive Aspects</th>
+                <th>Areas for Improvement</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for i in feedbacks %}
+            <tr>
+                <td>{{ i.rating }}</td>
+                <td>{{ i.experience }}</td>
+                <td>{{ i.suggestions }}</td>
+                <td>{{ i.positive_aspects }}</td>
+                <td>{{ i.areas_for_improvement }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>
