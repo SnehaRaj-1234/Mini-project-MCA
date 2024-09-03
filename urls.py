@@ -16,4 +16,9 @@ urlpatterns = [
     path('donatedItems',views.donatedItems,name="donatedItems"),
     path('register',views.register,name="register"),
     path('userdonate',views.userdonate,name="userdonate"),
+    path('admdonarlist',views.admdonarlist,name="admdonarlist"),
+    path('ufeedbackform',views.ufeedbackform,name="ufeedbackform"),
+    path('admfeedbform',views.admfeedbform,name="admfeedbform"),
+    path('userfsupport',views.userfsupport,name="userfsupport"),
+    path('admfsupport',views.admfsupport,name="admfsupport"),
 ]
