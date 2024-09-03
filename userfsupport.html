@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-image: url("{% static 'images/fsupport.jpg' %}");
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            max-width: 500px;
+            width: 100%;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #3a8b91;
+            margin-bottom: 20px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        input, textarea {
+            margin-bottom: 15px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        textarea {
+            height: 100px;
+            resize: vertical; 
+        }
+
+        button, .back-button {
+            padding: 10px 15px;
+            background-color: #3a8b91;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+            box-sizing: border-box;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        button:hover, .back-button:hover {
+            background-color: #0056b3;
+        }
+
+        .back-button {
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .error {
+            color: red;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Future Support Form</h1>
+        <form action="userfsupport" method="post">
+            {% csrf_token %}
+            <label for="name">Name</label>
+            <input type="text" id="name" name="name" required pattern="[A-Za-z\s]+" title="Name should only contain alphabets" placeholder="Enter your name">
+            
+            <label for="contact">Contact Number</label>
+            <input type="tel" id="contact" name="contact" required pattern="\d{10}" title="Contact number should be exactly 10 digits" placeholder="Enter your contact number">
+            
+            <label for="address">Address</label>
+            <textarea id="address" name="address" required placeholder="Enter your address"></textarea>
+
+            <button type="submit">Submit</button>
+            <a href="{% url 'userpg' %}" class="back-button">Back to Userpage</a>
+        </form>
+    </div>
+</body>
+</html>
