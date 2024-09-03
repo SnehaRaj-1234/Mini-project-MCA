@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-image: url("{% static 'images/fsupportadmin.jpg' %}");
+            background-size: 1600px 700px;
+            background-repeat: no-repeat; 
+            background-position: center; 
+            color: #333;
+            padding: 0;
+            margin: 0; 
+            height: 100vh; 
+            display: flex;
+            flex-direction: column; 
+            justify-content: flex-start; 
+            align-items: center; 
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-top: 20px; 
+        }
+
+        h1 {
+            text-align: center;
+            color: #696965;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 0;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #91918c;
+            color: #fff;
+        }
+
+        td {
+            background-color: #fff;
+        }
+
+        tr:nth-child(even) td {
+            background-color: #f9f9f9;
+        }
+
+        .back-button {
+            display: inline-block;
+            padding: 10px 15px;
+            background-color: #91918c;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            margin-top: 20px;
+            font-size: 16px;
+            max-width: 200px; 
+            width: auto; 
+        }
+
+        .back-button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Future Support Records</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Contact</th>
+                    <th>Address</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for record in fsupport %}
+                <tr>
+                    <td>{{ record.id }}</td>
+                    <td>{{ record.name }}</td>
+                    <td>{{ record.contact }}</td>
+                    <td>{{ record.address }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <a href="{% url 'adminpg' %}" class="back-button">Back to Home</a>
+    </div>
+</body>
+</html>
