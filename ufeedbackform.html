@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <style>
+        body, h1, form, label, input, textarea, select, button, a {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            color: #7eeff7;
+            padding: 20px;
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-image: url("{% static 'images/feedb.jpg' %}");
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto; 
+            background: none;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        p {
+            color: greenyellow;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            margin-bottom: 5px;
+            font-weight: bold;
+            background-color: none;
+            text-align: left; 
+        }
+
+        input, textarea, select {
+            margin-bottom: 15px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+            width: 100%; 
+            box-sizing: border-box; 
+        }
+
+        textarea {
+            resize: vertical;
+        }
+
+        .form-actions {
+            display: flex;
+            flex-direction: column; 
+            align-items: flex-start; 
+        }
+
+        button, .back-button {
+            padding: 10px 15px;
+            background-color: #3a8b91;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%; 
+            max-width: 200px; 
+            box-sizing: border-box; 
+            margin-bottom: 10px;
+            text-align: center; 
+        }
+
+        button:hover, .back-button:hover {
+            background-color: #0056b3;
+        }
+
+        .back-button {
+            background-color: #3a8b91; 
+            text-decoration: none; 
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Orphan Care Network Feedback Form</h1>
+        <br>
+        {% for i in messages %}
+        <p>{{i}}</p>
+        {% endfor %}
+        <form action="{% url 'ufeedbackform' %}" method="post">
+            {% csrf_token %}
+            <label for="rating">1. How would you rate our orphan care services?</label>
+            <select id="rating" name="rating" required>
+                <option value="">--Please choose an option--</option>
+                <option value="Poor">Poor</option>
+                <option value="Fair">Fair</option>
+                <option value="Good">Good</option>
+                <option value="Very Good">Very Good</option>
+                <option value="Excellent">Excellent</option>
+            </select>
+
+            <label for="experience">2. Please describe your experience with our services:</label>
+            <textarea id="experience" name="experience" rows="4" required></textarea>
+
+            <label for="suggestions">3. Do you have any suggestions for improvement?</label>
+            <textarea id="suggestions" name="suggestions" rows="4"></textarea>
+
+            <label for="positive-aspects">4. What did you like most about our services?</label>
+            <textarea id="positive-aspects" name="positive-aspects" rows="4"></textarea>
+
+            <label for="areas-for-improvement">5. Are there any areas you think we could improve?</label>
+            <textarea id="areas-for-improvement" name="areas-for-improvement" rows="4"></textarea>
+
+            <div class="form-actions">
+                <button type="submit">Submit Feedback</button>
+                <a href="{% url 'userpg' %}" class="back-button">Back to Userpage</a>
+            </div>
+        </form>
+    </div>
+</body>
+</html>
