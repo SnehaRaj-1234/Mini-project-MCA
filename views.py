@@ -1,9 +1,10 @@
 from django.shortcuts import render,HttpResponse, redirect
 from django.contrib import messages
-from .models import feedbform,futuresupport,userdonate,feedbackforms
+from .models import futuresupport,feedbackforms,userdonation,donation
 from django.contrib.auth.models import User,auth
 from django.contrib.auth.decorators import login_required
 
+import re
 
 # Create your views here.
 def open(request):
@@ -15,7 +16,8 @@ def register(request):
         
         mail = request.POST.get('email')
         password = request.POST.get('password')
-        data = User.objects.create_user( username=mail,email=mail, password=password)
+        # name = request.POST.get('name')
+        data = User.objects.create_user( username=mail, email=mail, password=password)
         # data.is_staff = True
         # data.is_superuser = True
         data.save()
@@ -23,6 +25,7 @@ def register(request):
         return render(request, "login.html")  # Function to access register fields
 
     return render(request, "register.html")  # Function to access register fields
+
 
 
 #login
@@ -105,25 +108,26 @@ def adminpg(request):
 
 
 @login_required
-def userdonate(request):
+def userdonatefn(request):
+    instance=None
     if request.method=="POST":
-        books=request.POST["books"]
-        stationery_items=request.POST["stationery_items"]
-        clothes=request.POST["clothes"]
-        others=request.POST["others"]
+        d_item=request.POST["donation"]
         address=request.POST["address"]
         date =request.POST["date"]
         time =request.POST["time"]
-        instance=userdonate.objects.create(books=books,stationery_items=stationery_items,clothes=clothes,others=others,address=address,date=date,time=time)
-       
+        name=request.POST["name"]or 'None'
+        # name=request.user.username
+        instance=userdonation.objects.create(d_item=d_item , name=name , address=address , date=date , time=time, collected=False)
         instance.save()
+        print(instance)
+
         messages.info(request,'Submitted successfully!')
         return render(request,'userdonate.html')
     return render(request,'userdonate.html',{'instance': instance})
 
 
 def donatedItems(request):
-    data=userdonate.objects.all()
+    data=userdonation.objects.all()
     return render(request,'donatedItems.html',{'data': data})
 
 
@@ -132,7 +136,15 @@ def mission(request):
 
 #admin_donorlist
 def admdonarlist(request):
-    return render(request,'admdonarlist.html')
+    ditem=userdonation.objects.all()
+    return render(request,'admdonarlist.html',{'ditem':ditem})
+
+def status(request,id):
+    ditem=userdonation.objects.get(id=id)
+    ditem.collected=True
+    ditem.save()
+    
+    return redirect('admdonarlist')
 
 #feedbackform user
 def ufeedbackform(request):
@@ -152,6 +164,9 @@ def ufeedbackform(request):
 
     return render(request,'ufeedbackform.html')
 
+def checkdstatus(request):
+    ditem=userdonation.objects.filter(name=request.user.username)
+    return render(request,'mydontestatus.html',{'ditem':ditem})
 
 #admin_feedbackform_viewing
 def admfeedbform(request):
@@ -177,3 +192,168 @@ def userfsupport(request):
 def admfsupport(request):
     fsupport=futuresupport.objects.all()
     return render(request,'admfsupport.html', {'fsupport': fsupport})
+
+#donor forget password
+def openforget(request):
+    return render(request,'forget.html',{'step':'1'})
+
+def change_password(request):
+    if request.method == 'POST':
+        step = request.POST.get('step', '1')  # Default to 1 if no step is provided
+
+        if step == '1':
+            email = request.POST.get('mail')
+
+            # Check if the email is associated with any account
+            if not User.objects.filter(email=email).exists():
+                return render(request, 'forget.html', {
+                    'error_message': 'Email not found. Please check and try again.',
+                    'step': '1'
+                })
+
+            # Proceed to the next step
+            return render(request, 'forget.html', {
+                'success_message': 'Email verified. Please enter your new password.',
+                'step': '2',
+                'mail': email
+            })
+
+        elif step == '2':
+            email = request.POST.get('mail')
+            new_password = request.POST.get('new_password')
+            confirm_password = request.POST.get('confirm_password')
+
+            if new_password != confirm_password:
+                return render(request, 'forget.html', {
+                    'error_message': 'Passwords do not match. Please try again.',
+                    'step': '2',
+                    'mail': email
+                })
+
+            # Password validation (at least 8 chars, 1 number, 1 letter, 1 symbol)
+            if len(new_password) < 8 or not any(c.isnumeric() for c in new_password) or not any(c.isalpha() for c in new_password) or not any(not c.isalnum() for c in new_password):
+                return render(request, 'forget.html', {
+                    'error_message': 'Password must have a minimum of 8 characters, including at least one number, one letter, and one symbol.',
+                    'step': '2',
+                    'mail': email
+                })
+
+            # Update the user's password
+            try:
+                user = User.objects.get(email=email)
+                user.set_password(new_password)  # Use set_password to hash the new password
+                user.save()
+
+                return render(request, 'login.html', {
+                    'success_message': 'Password has been reset successfully.'
+                })
+
+            except User.DoesNotExist:
+                return render(request, 'forget.html', {
+                    'error_message': 'Error updating password. Please try again.',
+                    'step': '2',
+                    'mail': email
+                })
+
+    return render(request, 'forget.html', {'step': '1'})
+
+#funddonation
+def fdonation(request):
+    if request.method == 'POST':
+        name = request.POST["name"]
+        amount = request.POST["amount"]
+
+        # if request.user.is_authenticated:
+        #     u=request.user.id
+        d = donation(name=name, donor_id=request.user, amount=amount) 
+            # donation=fdonation.objects.create(name=name,donor_id=u,amount=amount)
+        d.save()
+        # # Here you can add logic to handle the donation (e.g., save to database, process payment)
+        # return redirect('payment')  # Redirect to a thank you page after donation
+
+    return render(request, 'fdonation.html') 
+
+#thankyou page
+def thank_you(request):
+    return render(request,'thank_you.html')
+
+# #payment page
+# def payment(request, item_id):
+#     # Get the item being purchased
+#     item = get_object_or_404(Item, id=item_id)
+    
+#     razorpay_client = razorpay.Client(auth=("rzp_test_edrzdb8Gbx5U5M","XgwjnFvJQNG6cS7Q13aHKDJj"))
+#     # Create an order in Razorpay
+#     payment_order = razorpay_client.order.create({
+#         "amount": int(item.price * 100),  # Razorpay accepts amount in paisa
+#         "currency": "INR",
+#         "payment_capture": "1"  # Auto capture payment after success
+#     })
+
+#     context = {
+#         'item': item,
+#         'payment_order': payment_order
+#     }
+
+#     return render(request, 'payment.html', context)
+
+
+# def initiate_payment(request, item_id):
+#     razorpay_client = razorpay.Client(auth=("rzp_test_edrzdb8Gbx5U5M","XgwjnFvJQNG6cS7Q13aHKDJj"))
+#     item = Item.objects.get(id=item_id)
+#     amount = int(item.price * 100)  # Amount in paisa (Razorpay expects it in paisa)
+
+#     # Create an order in Razorpay
+#     payment_order = razorpay_client.order.create({
+#         'amount': amount,
+#         'currency': 'INR',
+#         'payment_capture': '1'
+#     })
+
+#     context = {
+#         'item': item,
+#         'payment_order': payment_order
+#     }
+#     return render(request, 'payment.html', context)
+
+# @csrf_exempt
+# def complete_payment(request,item_id):
+#     razorpay_client = razorpay.Client(auth=("rzp_test_edrzdb8Gbx5U5M","XgwjnFvJQNG6cS7Q13aHKDJj"))
+#     if request.method == "POST":
+#         razorpay_payment_id = request.POST.get('razorpay_payment_id')
+#         razorpay_order_id = request.POST.get('razorpay_order_id')
+#         razorpay_signature = request.POST.get('razorpay_signature')
+
+#         # Validate the payment signature (optional but recommended)
+#         params_dict = {
+#             'razorpay_order_id': razorpay_order_id,
+#             'razorpay_payment_id': razorpay_payment_id,
+#             'razorpay_signature': razorpay_signature
+#         }
+
+#         try:
+            
+#             # Verify the payment signature
+#             result = razorpay_client.utility.verify_payment_signature(params_dict)
+
+#             # If successful, mark the item as paid
+#             item = Item.objects.get(id=item_id)
+#             payment=Payment(item=item,payment_status='success',transaction_id=razorpay_payment_id,buyer_user=request.user)
+#             payment.save()
+            
+       
+#             item.save()
+
+#             # Optionally, send confirmation email to the user
+#             send_mail(
+#                 subject='Payment Successful',
+#                 message=f'Your payment for the item "{item.name}" has been successful.',
+#                 from_email=settings.EMAIL_HOST_USER,
+#                 recipient_list=[item.student.email],
+#                 fail_silently=False,
+#             )
+
+#             return HttpResponse("Payment successful!")
+#         except razorpay.errors.SignatureVerificationError as e:
+#             return HttpResponse(f"Payment failed: {str(e)}")
+#     return HttpResponse("Invalid request", status=400)
