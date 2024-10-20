@@ -3,7 +3,7 @@ from django.contrib import messages
 from .models import futuresupport,feedbackforms,userdonation,donation
 from django.contrib.auth.models import User,auth
 from django.contrib.auth.decorators import login_required
-
+import razorpay
 import re
 
 # Create your views here.
@@ -116,8 +116,8 @@ def userdonatefn(request):
         date =request.POST["date"]
         time =request.POST["time"]
         name=request.POST["name"]or 'None'
-        # name=request.user.username
-        instance=userdonation.objects.create(d_item=d_item , name=name , address=address , date=date , time=time, collected=False)
+        user=request.user.username
+        instance=userdonation.objects.create(user=user,d_item=d_item , name=name , address=address , date=date , time=time, collected=False)
         instance.save()
         print(instance)
 
@@ -165,8 +165,14 @@ def ufeedbackform(request):
     return render(request,'ufeedbackform.html')
 
 def checkdstatus(request):
-    ditem=userdonation.objects.filter(name=request.user.username)
+    ditem=userdonation.objects.filter(user=request.user.username)
     return render(request,'mydontestatus.html',{'ditem':ditem})
+
+def collectstatus(request,id):
+    item=userdonation.objects.get(id=id)
+    item.update(status=True)
+    ditem=userdonation.objects.all()
+    return render(request,'admdonarlist.html',{'ditem':ditem})
 
 #admin_feedbackform_viewing
 def admfeedbform(request):
@@ -257,6 +263,7 @@ def change_password(request):
 
     return render(request, 'forget.html', {'step': '1'})
 
+
 #funddonation
 def fdonation(request):
     if request.method == 'POST':
@@ -269,7 +276,7 @@ def fdonation(request):
             # donation=fdonation.objects.create(name=name,donor_id=u,amount=amount)
         d.save()
         # # Here you can add logic to handle the donation (e.g., save to database, process payment)
-        # return redirect('payment')  # Redirect to a thank you page after donation
+        return redirect('payment',amount=int(amount))  # Redirect to a thank you page after donation
 
     return render(request, 'fdonation.html') 
 
@@ -277,83 +284,58 @@ def fdonation(request):
 def thank_you(request):
     return render(request,'thank_you.html')
 
+
+
 # #payment page
-# def payment(request, item_id):
-#     # Get the item being purchased
-#     item = get_object_or_404(Item, id=item_id)
+def payment(request, amount):
+
     
-#     razorpay_client = razorpay.Client(auth=("rzp_test_edrzdb8Gbx5U5M","XgwjnFvJQNG6cS7Q13aHKDJj"))
-#     # Create an order in Razorpay
-#     payment_order = razorpay_client.order.create({
-#         "amount": int(item.price * 100),  # Razorpay accepts amount in paisa
-#         "currency": "INR",
-#         "payment_capture": "1"  # Auto capture payment after success
-#     })
+    razorpay_client = razorpay.Client(auth=("rzp_test_edrzdb8Gbx5U5M","XgwjnFvJQNG6cS7Q13aHKDJj"))
+    # Create an order in Razorpay
+    payment_order = razorpay_client.order.create({
+        "amount": int(amount * 100),  # Razorpay accepts amount in paisa
+        "currency": "INR",
+        "payment_capture": "1"  # Auto capture payment after success
+    })
 
-#     context = {
-#         'item': item,
-#         'payment_order': payment_order
-#     }
+    context = {
+        'amount': amount,
+        'payment_order': payment_order
+    }
 
-#     return render(request, 'payment.html', context)
+    return render(request, 'payment.html', context)
 
 
-# def initiate_payment(request, item_id):
-#     razorpay_client = razorpay.Client(auth=("rzp_test_edrzdb8Gbx5U5M","XgwjnFvJQNG6cS7Q13aHKDJj"))
-#     item = Item.objects.get(id=item_id)
-#     amount = int(item.price * 100)  # Amount in paisa (Razorpay expects it in paisa)
 
-#     # Create an order in Razorpay
-#     payment_order = razorpay_client.order.create({
-#         'amount': amount,
-#         'currency': 'INR',
-#         'payment_capture': '1'
-#     })
+def complete_payment(request,amount):
+    razorpay_client = razorpay.Client(auth=("rzp_test_edrzdb8Gbx5U5M","XgwjnFvJQNG6cS7Q13aHKDJj"))
+    if request.method == "POST":
+        razorpay_payment_id = request.POST.get('razorpay_payment_id')
+        razorpay_order_id = request.POST.get('razorpay_order_id')
+        razorpay_signature = request.POST.get('razorpay_signature')
 
-#     context = {
-#         'item': item,
-#         'payment_order': payment_order
-#     }
-#     return render(request, 'payment.html', context)
+        # Validate the payment signature (optional but recommended)
+        params_dict = {
+            'razorpay_order_id': razorpay_order_id,
+            'razorpay_payment_id': razorpay_payment_id,
+            'razorpay_signature': razorpay_signature
+        }
 
-# @csrf_exempt
-# def complete_payment(request,item_id):
-#     razorpay_client = razorpay.Client(auth=("rzp_test_edrzdb8Gbx5U5M","XgwjnFvJQNG6cS7Q13aHKDJj"))
-#     if request.method == "POST":
-#         razorpay_payment_id = request.POST.get('razorpay_payment_id')
-#         razorpay_order_id = request.POST.get('razorpay_order_id')
-#         razorpay_signature = request.POST.get('razorpay_signature')
-
-#         # Validate the payment signature (optional but recommended)
-#         params_dict = {
-#             'razorpay_order_id': razorpay_order_id,
-#             'razorpay_payment_id': razorpay_payment_id,
-#             'razorpay_signature': razorpay_signature
-#         }
-
-#         try:
+        try:
             
-#             # Verify the payment signature
-#             result = razorpay_client.utility.verify_payment_signature(params_dict)
+            # Verify the payment signature
+            result = razorpay_client.utility.verify_payment_signature(params_dict)
 
-#             # If successful, mark the item as paid
-#             item = Item.objects.get(id=item_id)
-#             payment=Payment(item=item,payment_status='success',transaction_id=razorpay_payment_id,buyer_user=request.user)
-#             payment.save()
-            
-       
-#             item.save()
 
-#             # Optionally, send confirmation email to the user
-#             send_mail(
-#                 subject='Payment Successful',
-#                 message=f'Your payment for the item "{item.name}" has been successful.',
-#                 from_email=settings.EMAIL_HOST_USER,
-#                 recipient_list=[item.student.email],
-#                 fail_silently=False,
-#             )
 
-#             return HttpResponse("Payment successful!")
-#         except razorpay.errors.SignatureVerificationError as e:
-#             return HttpResponse(f"Payment failed: {str(e)}")
-#     return HttpResponse("Invalid request", status=400)
+ 
+            return HttpResponse("Payment successful!")
+        except razorpay.errors.SignatureVerificationError as e:
+            return HttpResponse(f"Payment failed: {str(e)}")
+    return HttpResponse("Invalid request", status=400)
+
+
+
+
+def paybutton(request, amount):
+    return render(request, 'paybutton.html', {'amount': amount})
