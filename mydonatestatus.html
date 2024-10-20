@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        th,
+        td {
+            padding: 10px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #757373;
+            color: #fff;
+        }
+
+        td {
+            background-color: #fcf8f8;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Donation Details</h1>
+    <table>
+        <thead>
+            <tr>
+
+                <th>Donated item</th>
+                <th>Address</th>
+                <th>Date</th>
+                <th>Time</th>
+                <th>status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for i in ditem  reversed %}
+            <tr>
+                <td>{{ i.d_item }}</td>
+                <td>{{ i.address }}</td>
+                <td>{{ i.date }}</td>
+                <td>{{ i.time }}</td>
+                <td>
+                    {% if not i.collected %}
+
+                    pending
+                    </a>
+                    {% else %}
+                    collected
+                    {% endif %}
+                </td>
+            </tr>
+
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+
+</html>
