@@ -5,7 +5,7 @@
     <style>
       body {
         font-family: Arial, sans-serif;
-        background-image: url("{% static 'images/l1.jpg' %}"); /* Change to your image path */
+        background-image: url("{% static 'images/l1.jpg' %}");
         background-size: 1680px 710px;
         background-position: center;
         background-repeat: no-repeat;
@@ -46,9 +46,6 @@
         border-radius: 4px;
         background-color: white;
       }
-      .textarea-like-container input[type="email"] {
-        margin-bottom: 12px;
-      }
       .login-container button {
         width: 100%;
         padding: 10px;
@@ -66,20 +63,17 @@
         display: flex;
         flex-direction: column;
         align-items: center;
-        margin-top: 20px;
+        margin-top: 10px; /* Reduced margin-top */
       }
       .login-container .links a {
         color: #aadb37;
         text-decoration: none;
         font-weight: bold;
-        margin: 5px 0;
-      }
-      .login-container .links a:hover {
-        text-decoration: underline;
+        margin: 5px 0; /* Reduced margin */
       }
       .back-button {
         display: inline-block;
-        margin-top: 20px;
+        margin-top: 10px; /* Reduced margin-top */
         padding: 10px 20px;
         color: white;
         text-decoration: none;
@@ -110,6 +104,7 @@
             name="password"
             placeholder="Enter your password"
             required
+            autocomplete="new-password"
           />
 
           <button type="submit">Login</button>
@@ -120,7 +115,7 @@
       </div>
       <div class="links">
         <p><a href="{% url 'register' %}">New User? Sign Up</a></p>
-        <p><a href="/forgot-password">Forgot Password?</a></p>
+        <a href="{% url 'forgetpass' %}">Forgot Password?</a> <!-- Removed extra </p> -->
         <a href="{% url 'index' %}" class="back-button">Back to Home</a>
       </div>
     </div>
